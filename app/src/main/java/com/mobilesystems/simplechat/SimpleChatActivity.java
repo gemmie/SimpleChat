@@ -39,6 +39,7 @@ public class SimpleChatActivity extends AppCompatActivity {
     String nick;
     String ip;
     MessageAdapter adapter = null;
+    MemberData memberData = null;
     MqttClient client = null;
 
     @Override
@@ -53,6 +54,8 @@ public class SimpleChatActivity extends AppCompatActivity {
         msgEditText = findViewById(R.id.msgEditText);
         TextView txt = findViewById(R.id.connectedAs);
         txt.setText("Connected as " + nick + ".");
+
+        memberData = new MemberData(nick, getRandomColor());
         
         new Thread(new Runnable() {
 
@@ -114,9 +117,9 @@ public class SimpleChatActivity extends AppCompatActivity {
         }
         public void handleMessage(Message msg) {
             SimpleChatActivity activity = sActivity.get();
-            MemberData memberData = new MemberData(msg.getData().getString("NICK"), getRandomColor());
-            CustomMessage customMessage = new CustomMessage(msg.getData().getString("MSG"), memberData,
-                    memberData.getName().equals(activity.nick));
+
+            CustomMessage customMessage = new CustomMessage(msg.getData().getString("MSG"), activity.memberData,
+                    msg.getData().getString("NICK").equals(activity.nick));
             activity.adapter.add(customMessage);
         }
     }
